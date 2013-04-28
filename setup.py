@@ -19,7 +19,7 @@
 import sys
 import os
 import glob
-from setuptools import setup
+from setuptools import setup,find_packages
 #
 sys.path.insert(0, os.path.abspath('src'))
 
@@ -69,7 +69,7 @@ if __name__=='__main__':
             'Topic :: Software Development :: Libraries :: Python Modules',
         ],
 #        package_dir = {'': 'src'},
-        packages = PACKAGES,
+        packages = findpackages(),
         include_package_data = True,
         zip_safe = False,
         scripts=SCRIPTS,
