@@ -17,3 +17,13 @@ class PageAdmin(admin.ModelAdmin):
     ]
 admin.site.register(Page,PageAdmin)
 
+class MediaInline(admin.TabularInline):
+    model = EntryMedia
+
+class EntryAdmin(admin.ModelAdmin):
+    list_display=tuple([f.name for f in Entry._meta.fields ])
+    inlines = [
+        MediaInline,
+    ]
+admin.site.register(Entry,EntryAdmin)
+
