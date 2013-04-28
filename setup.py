@@ -68,7 +68,7 @@ if __name__=='__main__':
             'Topic :: Software Development :: Libraries :: Application Frameworks',
             'Topic :: Software Development :: Libraries :: Python Modules',
         ],
-#        package_dir = {'': 'src'},
+        package_dir = {'': 'src'},
         packages = find_packages(),
         include_package_data = True,
         zip_safe = False,
