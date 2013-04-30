@@ -1,0 +1,12 @@
+<div>
+  <form method="post" >{% csrf_token %}
+    {{ form }}
+
+    {% for media in form.instance.medias.all %}
+        <br/>
+        <img src="{% url 'blogs_media' media.id %}" width="300px"/>
+    {% endfor %}
+
+    <input type="submit" value="更新"  name="update">
+  </form>
+</div>

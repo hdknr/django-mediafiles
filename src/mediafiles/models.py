@@ -49,7 +49,8 @@ class MediaFile(models.Model):
             self.__dict__.pop('original_name')
             self.save()
 
-    def response(self,response_class):
+    def response(self,response_class,meta=False):
         res = response_class(self.data,content_type=self.mimetype)
-        res['Content-Disposition'] = 'attachment; filename=%s' % self.title
+        if meta:
+            res['Content-Disposition'] = 'attachment; filename=%s' % self.title
         return res
