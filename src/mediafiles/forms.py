@@ -2,9 +2,9 @@
 
 from django import forms
 from django.conf import settings
+from django.forms.models import modelformset_factory
 
 from models import *
-
 
 class MediaFileForm(forms.ModelForm):
     removing = forms.BooleanField(required=False,initial=False,)
@@ -17,3 +17,14 @@ class MediaFileForm(forms.ModelForm):
         exclude = ['user','slug','name','mimetype',
                     'content_type','object_id','content_object',
                     'created','updated',]
+
+
+def media_formset(request,queryset,prefix='media',*args,**kwargs):
+    
+    if request == None or request.method=='GET':
+        return modelformset_factory(MediaFile,form=MediaFileForm 
+                        )(queryset=queryset,prefix=prefix,*args,**kwargs)
+    else:
+        return modelformset_factory(MediaFile,form=MediaFileForm
+                        )(request.POST,request.FILES,
+                          queryset=queryset,prefix=prefix,*args,**kwargs)

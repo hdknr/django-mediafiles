@@ -8,7 +8,7 @@ import uuid
 from models import Blog
 from forms import BlogForm
 from mediafiles.models import MediaFile
-from mediafiles.forms import MediaFileForm
+from mediafiles.forms import MediaFileForm,media_formset
 #
 def media(request,id):
     m = MediaFile.objects.get(id=id )
@@ -44,20 +44,15 @@ def blog_edit_simple(request,id):
             {'form': form,'media_form':media_form, },
         context_instance=template.RequestContext(request))
 
-from django.forms.models import modelformset_factory
-
 def blog_edit_formset(request,id):
     blog = Blog.objects.get(id=id)
 
-    if request.method == "GET":
-        form = BlogForm(instance=blog,prefix='blog')
-        medias = modelformset_factory(MediaFile,form=MediaFileForm
-                    )(queryset=blog.medias.all(), prefix='media')
-    else:
-        form = BlogForm(request.POST,instance=blog,prefix='blog')
-        medias = modelformset_factory(MediaFile,form=MediaFileForm
-                    )(request.POST,request.FILES,
-                            queryset=blog.medias.all(), prefix='media')
+    form = BlogForm(request.POST if request.method =="POST" else None ,
+                    instance=blog,prefix='blog')
+    medias = media_formset(request,blog.medias.all())
+
+    if request.method == "POST":
+
         if form.is_valid() :
             form.save()
 
@@ -67,7 +62,7 @@ def blog_edit_formset(request,id):
                     if media.cleaned_data.get('removing',False):
                         blog.medias.remove(media.instance)
                     else:
-                        media.instance.user = request.user
+                        media.instance.user = request.user if request.user.is_authenticated() else None
                         media.save()
                         blog.medias.add(media.instance)
         else:
@@ -75,8 +70,8 @@ def blog_edit_formset(request,id):
             print medias.errors
 
             #: for increase medias.extra_forms after adding new mediafile
-        medias = modelformset_factory(MediaFile,form=MediaFileForm
-                    )( queryset=blog.medias.all(), prefix='media')
+
+        medias = media_formset(None,blog.medias.all())
 
     return render_to_response('blogs/blog/edit_formset.html',
             {'form': form,'medias':medias, },
