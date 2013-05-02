@@ -28,7 +28,6 @@ class EntryMedia(models.Model):
     media = models.ForeignKey(MediaFile)
 
 #####
-
 class Blog(AbstractEntry):
     medias = models.ManyToManyField(MediaFile,
                     null=True,blank=True, default=None) 

@@ -1,0 +1,21 @@
+{% load mediafiles %}
+<div>
+  <form method="post" enctype="multipart/form-data" >
+    {% csrf_token %}
+    {{ form }}
+
+    {{ medias.management_form }} {#: Management form MUST be specified.  #}
+    
+    {% for media in medias.forms %}
+        <hr/>
+        {{ media.id }}<br/>
+        {{ media.title }}<br/>
+        {{ media.description}}<br/>
+        {% if media.instance %}{% preview media.instance %}{% endif %}
+        {{ media.data }}<br/>
+        {{ media.removing }}取除く<br/>
+    {% endfor %}
+    <hr/>
+    <input type="submit" value="更新"  name="update">
+  </form>
+</div>
