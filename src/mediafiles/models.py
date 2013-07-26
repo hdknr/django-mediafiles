@@ -3,8 +3,10 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.timezone import now
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
+
 
 import mimetypes
 import hashlib
@@ -30,22 +32,22 @@ def create_upload_path(self, filename):
 
 class MediaFile(models.Model):
     user = models.ForeignKey(User,null=True,blank=True,default=None,
-            on_delete=models.SET_NULL,) 
+            verbose_name=_(u'User'),on_delete=models.SET_NULL,) 
     #:
-    name  = models.CharField(max_length=255,blank=True,)
-    title = models.CharField(max_length=255,blank=True,)
-    slug = models.SlugField(unique=True) 
-    description = models.TextField(blank=True)
+    name  = models.CharField(_(u'Name'),max_length=255,blank=True,)
+    title = models.CharField(_(u'Title'),max_length=255,blank=True,)
+    slug = models.SlugField(_(u'Slug'),unique=True) 
+    description = models.TextField(_(u'Description'),blank=True)
     #:
-    data = models.FileField(upload_to=create_upload_path)
-    mimetype= models.CharField(u'Mime Type',max_length=30,db_index=True,default='',blank=True, )
+    data = models.FileField(_(u'Data File'),upload_to=create_upload_path)
+    mimetype= models.CharField(_(u'Mime Type'),max_length=30,db_index=True,default='',blank=True, )
     #:
     content_type = models.ForeignKey(ContentType, null=True, blank=True)
     object_id = models.PositiveIntegerField(null=True, blank=True)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     #:
-    created = models.DateTimeField(u'Created',default=now,null=False)
-    updated = models.DateTimeField(u'Updated',auto_now=True)    
+    created = models.DateTimeField(_(u'Created'),default=now,null=False)
+    updated = models.DateTimeField(_(u'Updated'),auto_now=True)    
 
     def save(self,*args,**kwargs):
 
@@ -70,3 +72,29 @@ class MediaFile(models.Model):
         if meta:
             res['Content-Disposition'] = 'attachment; filename=%s' % self.name
         return res
+
+    def __unicode__(self):
+        return self.title or self.slug or self.name or self.id
+
+    class Meta:
+        verbose_name = _(u"Media File")
+        verbose_name_plural = _(u"Media Files")
+
+class Gallery(models.Model):
+    user = models.ForeignKey(User,null=True,blank=True,default=None,
+            verbose_name = _(u'User'), on_delete=models.SET_NULL,) 
+
+    name  = models.CharField(_(u'Name'),max_length=255,blank=True,)
+    title = models.CharField(_(u'Title'),max_length=255,blank=True,)
+    slug = models.SlugField(_(u'Slug'),unique=True) 
+    description = models.TextField(_(u'Description'),blank=True)
+
+    created = models.DateTimeField(_(u'Created'),default=now,null=False)
+    updated = models.DateTimeField(_(u'Updated'),auto_now=True)    
+
+    medias = models.ManyToManyField(MediaFile,verbose_name = _(u"Media Files"),
+                    null=True,blank=True, default=None) 
+
+    class Meta:
+        verbose_name = _(u"Gallery")
+        verbose_name_plural = _(u"Galleries")
