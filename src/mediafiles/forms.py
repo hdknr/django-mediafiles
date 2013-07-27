@@ -18,6 +18,13 @@ class MediaFileForm(forms.ModelForm):
                     'content_type','object_id','content_object',
                     'created','updated',]
 
+class GalleryMediaFileForm(forms.ModelForm):
+    ''' Galleryに追加するMediaFile '''
+    class Meta:
+        model= MediaFile
+        exclude = ['user','slug','name','mimetype',
+                    'content_type','object_id','content_object',
+                    'created','updated',]
 
 def media_formset(request,queryset,prefix='media',*args,**kwargs):
     
@@ -28,3 +35,4 @@ def media_formset(request,queryset,prefix='media',*args,**kwargs):
         return modelformset_factory(MediaFile,form=MediaFileForm
                         )(request.POST,request.FILES,
                           queryset=queryset,prefix=prefix,*args,**kwargs)
+

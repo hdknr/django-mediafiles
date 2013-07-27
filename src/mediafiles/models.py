@@ -22,6 +22,7 @@ def create_upload_path(self, filename):
         self.created = now() 
 
     self.original_name = filename #: original flename
+    filename = filename.encode('utf8')      #: conver to ascii
         
     ret =  "%s/%s/%s/%s" % ( 
         self.user.username if self.user else "_anyone_",
@@ -46,13 +47,13 @@ class MediaFile(models.Model):
     object_id = models.PositiveIntegerField(null=True, blank=True)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     #:
-    created = models.DateTimeField(_(u'Created'),default=now,null=False)
+    created = models.DateTimeField(_(u'Created'),default=now,null=True)
     updated = models.DateTimeField(_(u'Updated'),auto_now=True)    
 
     def save(self,*args,**kwargs):
 
         if not self.slug or len(self.slug) <1:
-            self.slug = slugify(self.title)
+            self.slug = slugify(self.title or uuid.uuid1().hex )
             n = MediaFile.objects.filter(slug=self.slug).count()
             if len(self.slug) < 1 or n > 0: 
                 self.slug = self.slug + "-%d"% timestamp()
@@ -74,7 +75,7 @@ class MediaFile(models.Model):
         return res
 
     def __unicode__(self):
-        return self.title or self.slug or self.name or self.id
+        return self.title or self.name or  self.slug or self.id
 
     class Meta:
         verbose_name = _(u"Media File")
