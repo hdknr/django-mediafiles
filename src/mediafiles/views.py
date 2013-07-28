@@ -74,16 +74,19 @@ class GalleryAdminMediaCreate(CreateView):
 #        return super(GalleryAdminMediaCreate,self).form_invalid(form)
         
     def form_valid(self, form):
-        print "HDKNR(form_valid):",dir(self)
         form.instance.user = self.request.user      #:ログインユーザー
         new_media = form.save()
-        Gallery.objects.get(id=self.kwargs['id']).medias.add( new_media )  
-#        self.object = form.save()
+
+        self.gallery = Gallery.objects.get(id=self.kwargs['id'])    #: 別なところで
+        self.gallery.medias.add( new_media )  
 
 #        f = self.request.FILES.get('file')
+        url = reverse('mediafiles_preview',kwargs={'id': new_media.id ,} )
+        
+        #: jquery file upload API data (JSON)
         data = [{'name': new_media.name, 
-#                'url': settings.MEDIA_URL + "pictures/" + new_media.name.replace(" ", "_"), 
-#                'thumbnail_url': settings.MEDIA_URL + "pictures/" + f.name.replace(" ", "_"), 
+                'url': url,
+                'thumbnail_url': url,
 #                'delete_url': reverse('upload-delete', args=[self.object.id]), 
 #                'delete_type': "DELETE"
                 }]

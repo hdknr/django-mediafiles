@@ -7,8 +7,9 @@
 {% endblock %}
 
 {% block content %}
-
 <div class="container">
+
+    <h1> {{ object }}</h1>
 
     <form id="fileupload" method="post" 
             action="{% url 'gallery_admin_media_create' id=object.id %}" 
@@ -43,7 +44,7 @@
             </div>
         </div>
         <div class="fileupload-loading"></div>
-        <table class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
+        <table class="table table-striped"><tbody id="uploading-tbody" class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
     </form>
 
     <div class="fileupload-content">
@@ -53,54 +54,33 @@
 
     <div>
         {% if mediafiles %}
-        <h2>ギャラリー</h2>
-        <table class="table table-striped">
+        <h2>写真</h2>
+        <table class="table table-striped" >
+          <tbody id="uploaded-tbody" class="files" data-toggle="modal-gallery" data-target="#modal-gallery">
             {% for mediafile in mediafiles.all %}  {# MediaFile queryset #}
             <tr>
                 <td class="preview">
                     {% preview mediafile %} {#: mediafile library :#}
                 </td>
-                <td class="name">{{ mediafile }}</td>
+                <td class="name" >
+                    <a href="{{ mediafile.get_absolute_url }}" 
+                        title="{{ mediafile }}" data-gallery="gallery" rel="gallery" download="{{mediafile}}"  >{{mediafile}}</a>
+                </td>
                 <td class="delete">
                     <a class="btn btn-danger" href="#{# {% url 'upload-delete' picture.id %} #}"> <i class="icon-trash icon-white"></i> <span>Delete</span> </a>
                 </td>
             </tr>
             {% endfor %}
+          </tbody>
         </table>
-        <p>(Removing from this list is left as an exercise to the reader)</p>
         {% endif %}
     </div>
 
 </div>
 
-<!-- modal-gallery is the modal dialog used for the image gallery -->
-<div id="modal-gallery" class="modal modal-gallery hide fade" data-filter=":odd">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal">&times;</a>
-        <h3 class="modal-title"></h3>
-    </div>
-    <div class="modal-body"><div class="modal-image"></div></div>
-    <div class="modal-footer">
-        <a class="btn modal-download" target="_blank">
-            <i class="icon-download"></i>
-            <span>Download</span>
-        </a>
-        <a class="btn btn-success modal-play modal-slideshow" data-slideshow="5000">
-            <i class="icon-play icon-white"></i>
-            <span>Slideshow</span>
-        </a>
-        <a class="btn btn-info modal-prev">
-            <i class="icon-arrow-left icon-white"></i>
-            <span>Previous</span>
-        </a>
-        <a class="btn btn-primary modal-next">
-            <span>Next</span>
-            <i class="icon-arrow-right icon-white"></i>
-        </a>
-    </div>
-</div>
+{% include "mediafiles/modal.html" %}    {#: gallery popup :#}
 
-{% upload_js %}     {#: galleries :#}
+{% upload_js %}     {#: galleries templates :#}
 
 {# ------------------------------------------------------------------------------ #}
 

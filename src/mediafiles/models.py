@@ -6,6 +6,7 @@ from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
+from django.core.urlresolvers import reverse
 
 
 import mimetypes
@@ -74,6 +75,12 @@ class MediaFile(models.Model):
             res['Content-Disposition'] = 'attachment; filename=%s' % self.name
         return res
 
+    def get_absolute_url(self):
+        try:
+            return reverse('mediafiles_preview',kwargs={'id': self.id ,} )
+        except:
+            return None
+
     def __unicode__(self):
         return self.title or self.name or  self.slug or self.id
 
@@ -95,6 +102,9 @@ class Gallery(models.Model):
 
     medias = models.ManyToManyField(MediaFile,verbose_name = _(u"Media Files"),
                     null=True,blank=True, default=None) 
+
+    def __unicode__(self):
+        return self.title or self.name or self.slug
 
     class Meta:
         verbose_name = _(u"Gallery")
