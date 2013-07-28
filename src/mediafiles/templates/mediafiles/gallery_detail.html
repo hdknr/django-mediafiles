@@ -4,7 +4,7 @@
 {% load mediafiles %}  
 
 {% block css %}
-{% include "mediafiles/gallery_css.html" %}
+{% include "mediafiles/uploader/css.html" %}
 {% endblock %}
 
 {% block content %}
@@ -12,7 +12,7 @@
 
     <h1> {{ object }}</h1>
 
-{% include "mediafiles/uploader.html" %}
+{% include "mediafiles/uploader/uploader.html" %}
 
     <div>
         {% if mediafiles %}
@@ -42,13 +42,14 @@
 
 </div>
 
-{% include "mediafiles/modal.html" %}    {#: gallery popup :#}
+{% include "mediafiles/uploader/modal.html" %}    {#: gallery popup :#}
 
-{% upload_js %}     {#: galleries templates :#}
+{% literal_include 'mediafiles/uploader/upload_script.html' %}
+{% literal_include 'mediafiles/uploader/download_script.html' %}
 
 {# ------------------------------------------------------------------------------ #}
 
-{% include "mediafiles/gallery_js.html" %}
+{% include "mediafiles/uploader/js.html" %}
 
 {% endblock %}
 
