@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response
 #
 from models import MediaFile,Gallery
 from forms import GalleryMediaFileForm
+import uuid
 #
 def preview(request,id):
     m = MediaFile.objects.get(id=id )
@@ -44,6 +45,7 @@ class GalleryAdminDetail(DetailView):
         '''
         context = super(GalleryAdminDetail, self).get_context_data(**kwargs)
         context['mediafiles'] = self.object.medias 
+        context['salt'] =  uuid.uuid1().hex
         return context
 
 class GalleryAdminList(ListView):
