@@ -31,7 +31,7 @@
                 </td>
                 <td class="delete">
                     <a class="btn btn-danger" 
-                    href="#{# {% url 'upload-delete' picture.id %} #}"> <i class="icon-trash icon-white"></i> <span>Delete</span> </a>
+                    href="{% url 'gallery_admin_media_delete' id=object.id mid=mediafile.id %}"> <i class="icon-trash icon-white"></i> <span>{% trans "Delete" %}</span> </a>
                 </td>
             </tr>
             {% endfor %}

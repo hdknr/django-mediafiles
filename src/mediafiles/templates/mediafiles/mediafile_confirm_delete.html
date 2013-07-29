@@ -1,0 +1,23 @@
+{% extends GALLERY_BASE %}
+{% load i18n %}
+{% load galleries %}  
+{% load mediafiles %}  
+
+{% block content %}
+<div class="container">
+{% if object %}
+    <div class="page-header">
+        <h1>{% trans "Delete" %} {{ object}}?</h1>
+    </div>
+    <img src="{{ object.get_absolute_url }}" alt="" width="80%" >
+
+    <form method="post" action="" class="form">{% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger"><i class="icon-trash icon-white"></i> {% trans "Delete" %}</button>
+            <button type="button" onclick="window.history.back();" class="btn"><i class="icon-remove"></i> {% trans "Cancel" %} </button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+{% endblock %}

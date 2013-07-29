@@ -89,8 +89,9 @@ class GalleryAdminMediaCreate(CreateView):
         data = [{'name': new_media.name, 
                 'url': url,
                 'thumbnail_url': url,
-#                'delete_url': reverse('upload-delete', args=[self.object.id]), 
-#                'delete_type': "DELETE"
+                'delete_url': reverse('gallery_admin_media_delete', 
+                    kwargs={'id':self.kwargs['id'], 'mid':new_media.id,} ),
+                'delete_type': "DELETE"
                 }]
         response = JSONResponse(data, {}, response_mimetype(self.request))
         response['Content-Disposition'] = 'inline; filename=files.json'
@@ -103,6 +104,28 @@ class JSONResponse(HttpResponse):
         content = simplejson.dumps(obj,**json_opts)
         super(JSONResponse,self).__init__(content,mimetype,*args,**kwargs)
 
+class GalleryAdminMediaDelete(DeleteView):
+    model = MediaFile
+
+    def get_object(self,*args,**kwargs):
+        return Gallery.objects.get(id=self.kwargs['id'] ).medias.get(id=self.kwargs['mid'])
+
+    def delete(self, request, *args, **kwargs):
+        """ 
+        This does not actually delete the file, only the database record.  But
+        that is easy to implement.
+        """
+        self.object = self.get_object()
+        self.object.delete()        #:削除
+        if request.is_ajax():
+            response = JSONResponse(True, {}, response_mimetype(self.request))
+            response['Content-Disposition'] = 'inline; filename=files.json'
+            return response
+        else:
+            return HttpResponseRedirect( 
+            reverse( 'gallery_admin_detail',kwargs={'id': self.kwargs['id'],} ) )
+
 GalleryAdminDetailView = login_required(GalleryAdminDetail.as_view())
 GalleryAdminListView = login_required(GalleryAdminList.as_view())
 GalleryAdminMediaCreateView = login_required(GalleryAdminMediaCreate.as_view())
+GalleryAdminMediaDeleteView = login_required(GalleryAdminMediaDelete.as_view())
