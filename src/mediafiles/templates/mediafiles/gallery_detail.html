@@ -22,12 +22,12 @@
             {% for mediafile in mediafiles.all %}  {# MediaFile queryset #}
             <tr>
                 <td class="preview">
-                    <a href="{{ mediafile.get_absolute_url }}" data-gallery="gallery" >
-                         <img src="{{ mediafile.get_absolute_url }}" />
+                    <a href="{{ mediafile.get_absolute_url }}" {% if mediafile.is_image %}data-gallery="gallery" {% endif %}>
+                         <img src="{{ mediafile.get_thumbnail_url }}" />
                     </a>
                 </td>
                 <td class="name" >
-                    <a href="{{ mediafile.get_absolute_url }}" data-gallery="gallery" >{{ mediafile }} </a>
+                    <a href="{{ mediafile.get_absolute_url }}" {% if mediafile.is_image %}data-gallery="gallery" {% endif %}>{{ mediafile }} </a>
                 </td>
                 <td class="delete">
                     <a class="btn btn-danger" 

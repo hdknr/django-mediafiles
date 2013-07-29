@@ -88,7 +88,8 @@ class GalleryAdminMediaCreate(CreateView):
         #: jquery file upload API data (JSON)
         data = [{'name': new_media.name, 
                 'url': url,
-                'thumbnail_url': url,
+                'thumbnail_url': new_media.get_thumbnail_url(),
+                'gallery' :  'gallery' if new_media.is_image() else "", 
                 'delete_url': reverse('gallery_admin_media_delete', 
                     kwargs={'id':self.kwargs['id'], 'mid':new_media.id,} ),
                 'delete_type': "DELETE"

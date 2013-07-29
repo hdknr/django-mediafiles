@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.core.urlresolvers import reverse
-
+from django.conf import settings
 
 import mimetypes
 import hashlib
@@ -15,6 +15,7 @@ import os
 import uuid
 from datetime import datetime
 import time
+import urllib
 
 timestamp = lambda : int(time.mktime(datetime.now().timetuple()))
 
@@ -78,8 +79,17 @@ class MediaFile(models.Model):
     def get_absolute_url(self):
         try:
             return reverse('mediafiles_preview',kwargs={'id': self.id ,} )
-        except:
+        except Exception,e:
+            print ">>>>>",e
             return None
+
+    def get_thumbnail_url(self):
+        if self.is_image():
+            return self.get_absolute_url()
+        return "%sico/%s.gif" % (settings.STATIC_URL,urllib.quote(self.mimetype) )
+
+    def is_image(self):
+        return self.mimetype.find("image") ==0
 
     def __unicode__(self):
         return self.title or self.name or  self.slug or self.id
