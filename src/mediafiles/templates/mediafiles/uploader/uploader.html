@@ -1,6 +1,8 @@
+{# mediafile_uploader : URL media file is uploaded to.      #}
+{# data_field         : Form field name for uploaded file   #}
 {% load i18n %} {#: trans #}
     <form id="fileupload" method="post" 
-            action="{% url 'gallery_admin_media_create' id=object.id %}" 
+            action="{{ mediafile_uploader }}"
             enctype="multipart/form-data">{% csrf_token %}
 
         <div class="row fileupload-buttonbar">
@@ -8,7 +10,7 @@
                 <span class="btn btn-primary fileinput-button">
                     <i class="icon-plus icon-white"></i>
                     <span>{% trans "Add files" %}...</span>
-                    <input type="file" name="data" multiple>            {#: MediaFile.data :#}
+                    <input type="file" name="{{ data_field }}" multiple>            {#: MediaFile.data :#}
                 </span>
                 <button type="submit" class="btn btn-success start">
                     <i class="icon-upload icon-white"></i>

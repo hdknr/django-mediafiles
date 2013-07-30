@@ -80,7 +80,6 @@ class MediaFile(models.Model):
         try:
             return reverse('mediafiles_preview',kwargs={'id': self.id ,} )
         except Exception,e:
-            print ">>>>>",e
             return None
 
     def get_thumbnail_url(self):

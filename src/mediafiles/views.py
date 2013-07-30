@@ -46,6 +46,8 @@ class GalleryAdminDetail(DetailView):
         context = super(GalleryAdminDetail, self).get_context_data(**kwargs)
         context['mediafiles'] = self.object.medias 
         context['salt'] =  uuid.uuid1().hex
+        context['mediafile_uploader'] = reverse('gallery_admin_media_create',
+                                            kwargs={'id':self.kwargs['id'] } )
         return context
 
 class GalleryAdminList(ListView):
