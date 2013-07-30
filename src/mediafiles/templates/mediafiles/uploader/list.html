@@ -1,0 +1,27 @@
+{% load i18n %}
+{% load mediafiles %}
+    <div>
+        {% if mediafiles %}
+        <h2>{% trans "Upload Media" %}</h2>
+        <table class="table table-striped" >
+          <tbody id="uploaded-tbody" class="files" data-toggle="modal-gallery" data-target="#modal-gallery" >
+            {% for mediafile in mediafiles.all %}  
+            <tr>
+                <td class="preview">
+                    <a href="{{ mediafile.get_absolute_url }}" {% if mediafile.is_image %}data-gallery="gallery" {% endif %}>
+                         <img src="{{ mediafile.get_thumbnail_url }}" />
+                    </a>
+                </td>
+                <td class="name" >
+                    <a href="{{ mediafile.get_absolute_url }}" {% if mediafile.is_image %}data-gallery="gallery" {% endif %}>{{ mediafile }} </a>
+                </td>
+                <td class="delete">
+                    <a class="btn btn-danger" 
+                    href="{% url mediafile_deleter id=container.id mid=mediafile.id %}"> <i class="icon-trash icon-white"></i> <span>{% trans "Delete" %}</span> </a>
+                </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+    </div>

@@ -12,39 +12,14 @@
 
     <h1> {{ object }}</h1>
 
-{% gallery_include_uploader %}
-
-    <div>
-        {% if mediafiles %}
-        <h2>写真</h2>
-        <table class="table table-striped" >
-          <tbody id="uploaded-tbody" class="files" data-toggle="modal-gallery" data-target="#modal-gallery" >
-            {% for mediafile in mediafiles.all %}  {# MediaFile queryset #}
-            <tr>
-                <td class="preview">
-                    <a href="{{ mediafile.get_absolute_url }}" {% if mediafile.is_image %}data-gallery="gallery" {% endif %}>
-                         <img src="{{ mediafile.get_thumbnail_url }}" />
-                    </a>
-                </td>
-                <td class="name" >
-                    <a href="{{ mediafile.get_absolute_url }}" {% if mediafile.is_image %}data-gallery="gallery" {% endif %}>{{ mediafile }} </a>
-                </td>
-                <td class="delete">
-                    <a class="btn btn-danger" 
-                    href="{% url 'gallery_admin_media_delete' id=object.id mid=mediafile.id %}"> <i class="icon-trash icon-white"></i> <span>{% trans "Delete" %}</span> </a>
-                </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {% endif %}
-    </div>
+   {% gallery_include_uploader %}
+   {% gallery_include_list %}
 
 </div>
 
 {% gallery_include_preview %} 
-{% gallery_download_script %}
-{% gallery_upload_script %}
+{% gallery_include_download_script %}
+{% gallery_include_upload_script %}
 {% gallery_include_js %}
 
 {% endblock %}

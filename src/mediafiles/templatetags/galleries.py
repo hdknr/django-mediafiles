@@ -12,11 +12,11 @@ def literal_include(template_name):
     return  Loader().load_template_source(template_name,DIR)[0]
 
 @register.simple_tag
-def gallery_download_script(template_name='mediafiles/uploader/download_script.html' ):
+def gallery_include_download_script(template_name='mediafiles/uploader/download_script.html' ):
     return literal_include(template_name)
 
 @register.simple_tag
-def gallery_upload_script(template_name='mediafiles/uploader/upload_script.html' ):
+def gallery_include_upload_script(template_name='mediafiles/uploader/upload_script.html' ):
     return literal_include(template_name)
 
 @register.inclusion_tag("mediafiles/uploader/js.html",takes_context=True)
@@ -35,4 +35,9 @@ def gallery_include_uploader(context,mediafile_uploder=None, data_field=None):
 
 @register.inclusion_tag("mediafiles/uploader/modal.html",takes_context=True)
 def gallery_include_preview(context):
+    return context
+
+@register.inclusion_tag("mediafiles/uploader/list.html",takes_context=True)
+def gallery_include_list(context,mediafile_deleter='gallery_admin_media_delete'):
+    context['mediafile_deleter']= context.get('mediafile_deleter',mediafile_deleter )
     return context
