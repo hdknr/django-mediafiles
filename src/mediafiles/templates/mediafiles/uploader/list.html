@@ -17,7 +17,8 @@
                 </td>
                 <td class="delete">
                     <a class="btn btn-danger" 
-                    href="{% url mediafile_deleter id=container.id mid=mediafile.id %}"> <i class="icon-trash icon-white"></i> <span>{% trans "Delete" %}</span> </a>
+                    href="{% make_delete_url mediafile_deleter id=container.id mid=mediafile.id %}">
+                    <i class="icon-trash icon-white"></i> <span>{% trans "Delete" %}</span> </a>
                 </td>
             </tr>
             {% endfor %}

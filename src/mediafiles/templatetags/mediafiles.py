@@ -13,3 +13,9 @@ def preview(media,templatedir="mediafiles",*args,**kwargs ):
                 template.Context({'media':media,}) )
     except:
         return ""
+
+@register.simple_tag(takes_context=True)
+def make_delete_url(context,urlname,**kwargs ):
+    p = context.get('mediafile_deleter_hint',{} )
+    p.update(kwargs)
+    return reverse(urlname, kwargs=kwargs )
