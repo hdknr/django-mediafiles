@@ -8,16 +8,17 @@
             {% for mediafile in mediafiles.all %}  
             <tr>
                 <td class="preview">
-                    <a href="{{ mediafile.get_absolute_url }}" {% if mediafile.is_image %}data-gallery="gallery" {% endif %}>
-                         <img src="{{ mediafile.get_thumbnail_url }}" />
+                    <a href="{% mediafile_image_url mediafile id=container.id mid=mediafile.id %}" 
+                        {% if mediafile.is_image %}data-gallery="gallery" {% endif %}>
+                         <img src="{% mediafile_thumbnail_url mediafile id=container.id mid=mediafile.id %}" />
                     </a>
                 </td>
                 <td class="name" >
-                    <a href="{{ mediafile.get_absolute_url }}" {% if mediafile.is_image %}data-gallery="gallery" {% endif %}>{{ mediafile }} </a>
+                    <a href="{% mediafile_image_url mediafile id=container.id mid=mediafile.id %}" >{{ mediafile }} </a>
                 </td>
                 <td class="delete">
                     <a class="btn btn-danger" 
-                    href="{% make_delete_url mediafile_deleter id=container.id mid=mediafile.id %}">
+                    href="{% mediafile_delete_url mediafile id=container.id mid=mediafile.id %}">
                     <i class="icon-trash icon-white"></i> <span>{% trans "Delete" %}</span> </a>
                 </td>
             </tr>
