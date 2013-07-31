@@ -14,10 +14,21 @@
     <form method="post" action="" class="form">{% csrf_token %}
         <div class="form-actions">
             <button type="submit" class="btn btn-danger"><i class="icon-trash icon-white"></i> {% trans "Delete" %}</button>
-            <button type="button" onclick="window.history.back();" class="btn"><i class="icon-remove"></i> {% trans "Cancel" %} </button>
+            <a class="btn" href="#" ><i class="icon-remove"></i> {% trans "Cancel" %} </a>
         </div>
     </form>
 </div>
 {% endif %}
 
 {% endblock %}
+
+{% block bottom_script %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> 
+<script>
+$("a.btn").click( function(){
+   window.close(); 
+   return false;
+});
+</script>
+{% endblock %}
+

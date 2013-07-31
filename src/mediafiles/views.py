@@ -48,6 +48,11 @@ class GalleryAdminDetail(DetailView):
         context['container'] = self.object
         context['mediafile_uploader'] = reverse('gallery_admin_media_create',
                                             kwargs={'id':self.kwargs['id'] } )
+        context['mediafile_delete_url'] ="gallery_admin_media_delete"
+        context['mediafile_image_url'] ="gallery_admin_media_image"
+        context['mediafile_thumbnail_url'] ="gallery_admin_media_image"
+        context['mediafile_url_hint'] = {}
+
         context['salt'] =  uuid.uuid1().hex
         return context
 
@@ -126,10 +131,17 @@ class GalleryAdminMediaDelete(DeleteView):
             response['Content-Disposition'] = 'inline; filename=files.json'
             return response
         else:
-            return HttpResponseRedirect( 
-            reverse( 'gallery_admin_detail',kwargs={'id': self.kwargs['id'],} ) )
+            return render_to_response( 'mediafiles/mediafile_deleted.html',
+                     context_instance=template.RequestContext(request), )
+
+class GalleryAdminMediaImage(DetailView):
+    model = MediaFile
+    def get(self, request, *args, **kwargs):
+        media = Gallery.objects.get(id=self.kwargs['id'] ).medias.get(id=self.kwargs['mid'])
+        return media.response( HttpResponse )
 
 GalleryAdminDetailView = login_required(GalleryAdminDetail.as_view())
 GalleryAdminListView = login_required(GalleryAdminList.as_view())
 GalleryAdminMediaCreateView = login_required(GalleryAdminMediaCreate.as_view())
 GalleryAdminMediaDeleteView = login_required(GalleryAdminMediaDelete.as_view())
+GalleryAdminMediaImageView = login_required(GalleryAdminMediaImage.as_view())
