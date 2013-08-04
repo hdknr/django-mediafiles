@@ -6,3 +6,5 @@ local_settings.py
 *.sqlite3
 sample/web/app/media
 sample/web/app/static
+*DS_Store
+*.swp

@@ -17,6 +17,8 @@ from datetime import datetime
 import time
 import urllib
 
+from thumbs import generate_thumb,cached_thumb,get_cached_file,DEFAULT_SIZE
+
 timestamp = lambda : int(time.mktime(datetime.now().timetuple()))
 
 def create_upload_path(self, filename):
@@ -69,9 +71,19 @@ class MediaFile(models.Model):
             self.mimetype = mimetypes.guess_type(self.data.name)[0]
             self.__dict__.pop('original_name')
             self.save()
+    
+    def thumb(self,size):
+        return cached_thumb(self.data,size )
 
-    def response(self,response_class,meta=False):
-        res = response_class(self.data,content_type=self.mimetype)
+    def thumb_path(self,size):
+        return get_cached_file(self.data,size )
+        
+    def response(self,response_class,meta=False,size=None):
+        if size :
+            res = response_class( self.thumb(size),
+                content_type=self.mimetype)
+        else:
+            res = response_class(self.data,content_type=self.mimetype)
         if meta:
             res['Content-Disposition'] = 'attachment; filename=%s' % self.name
         return res
@@ -82,9 +94,14 @@ class MediaFile(models.Model):
         except Exception,e:
             return None
 
-    def get_thumbnail_url(self):
+    def get_thumbnail_url(self,size=DEFAULT_SIZE):
         if self.is_image():
-            return self.get_absolute_url()
+            if any([ size==None,len(size)!=2, 0 in size ]):
+                return self.get_absolute_url()
+            else:
+                return reverse('mediafiles_thumbnail',
+                        kwargs={'id': self.id ,'width':size[0], 'height':size[1],} )
+
         return "%sico/%s.gif" % (settings.STATIC_URL,urllib.quote(self.mimetype) )
 
     def is_image(self):
@@ -118,3 +135,16 @@ class Gallery(models.Model):
     class Meta:
         verbose_name = _(u"Gallery")
         verbose_name_plural = _(u"Galleries")
+
+
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+import glob
+@receiver(post_delete, sender=MediaFile )
+def on_delete_mediafile(sender,**kwargs):
+    mediafile = kwargs.get('instance',None)
+    if mediafile:
+        storage,path = mediafile.data.storage, mediafile.data.path 
+        storage.delete(path)
+        base,ext = os.path.splitext(path)
+        map(lambda i: storage.delete(i), glob.glob( base +"*"+ext ) )

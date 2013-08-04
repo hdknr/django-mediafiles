@@ -15,6 +15,10 @@ def download(request,id):
     m = MediaFile.objects.get(id=id )
     return m.response( HttpResponse,meta=True )
 
+def thumbnail(request,id,width,height):
+    m = MediaFile.objects.get(id=id )
+    return m.response( HttpResponse,size=(int(width),int(height)) )
+
 #######
 
 from django.utils import simplejson
@@ -24,7 +28,8 @@ from django.views.generic import CreateView, DeleteView, UpdateView, ListView,De
 from django.contrib.auth.decorators import login_required, permission_required
 
 def response_mimetype(request):
-    if "application/json" in request.META['HTTP_ACCEPT']:
+#    if "application/json" in request.META['HTTP_ACCEPT']:
+    if "application/json" in request.META.get('HTTP_ACCEPT',[]):
         return "application/json"
     else:
         return "text/plain"
@@ -50,10 +55,10 @@ class GalleryAdminDetail(DetailView):
                                             kwargs={'id':self.kwargs['id'] } )
         context['mediafile_delete_url'] ="gallery_admin_media_delete"
         context['mediafile_image_url'] ="gallery_admin_media_image"
-        context['mediafile_thumbnail_url'] ="gallery_admin_media_image"
+        context['mediafile_thumbnail_url'] ="gallery_admin_media_thumb"
         context['mediafile_url_hint'] = {}
 
-        context['salt'] =  uuid.uuid1().hex
+#        context['salt'] =  uuid.uuid1().hex
         return context
 
 class GalleryAdminList(ListView):
@@ -96,7 +101,7 @@ class GalleryAdminMediaCreate(CreateView):
         #: jquery file upload API data (JSON)
         data = [{'name': new_media.name, 
                 'url': url,
-                'thumbnail_url': new_media.get_thumbnail_url(),
+                'thumbnail_url': new_media.get_thumbnail_url(size=(100,30),),
                 'gallery' :  'gallery' if new_media.is_image() else "", 
                 'delete_url': reverse('gallery_admin_media_delete', 
                     kwargs={'id':self.kwargs['id'], 'mid':new_media.id,} ),
@@ -140,8 +145,16 @@ class GalleryAdminMediaImage(DetailView):
         media = Gallery.objects.get(id=self.kwargs['id'] ).medias.get(id=self.kwargs['mid'])
         return media.response( HttpResponse )
 
+class GalleryAdminMediaThumb(DetailView):
+    model = MediaFile
+    def get(self, request, *args, **kwargs):
+        media = Gallery.objects.get(id=self.kwargs['id'] ).medias.get(id=self.kwargs['mid'])
+        size=( int(request.GET.get('width',100)), int(request.GET.get('height',30)) )
+        return media.response( HttpResponse ,size=size )
+
 GalleryAdminDetailView = login_required(GalleryAdminDetail.as_view())
 GalleryAdminListView = login_required(GalleryAdminList.as_view())
 GalleryAdminMediaCreateView = login_required(GalleryAdminMediaCreate.as_view())
 GalleryAdminMediaDeleteView = login_required(GalleryAdminMediaDelete.as_view())
 GalleryAdminMediaImageView = login_required(GalleryAdminMediaImage.as_view())
+GalleryAdminMediaThumbView = login_required(GalleryAdminMediaThumb.as_view())

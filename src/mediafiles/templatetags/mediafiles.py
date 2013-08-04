@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from django import template
 from django.core.urlresolvers import reverse
+
+from ..thumbs import DEFAULT_SIZE
 #
 register = template.Library()
 #
@@ -14,15 +16,16 @@ def preview(media,templatedir="mediafiles",*args,**kwargs ):
     except:
         return ""
 
-@register.simple_tag(takes_context=True)
-def make_delete_url(context,urlname,**kwargs ):
-    p = context.get('mediafile_deleter_hint',{} )
-    p.update(kwargs)
-    return reverse(urlname, kwargs=p)
+#@register.simple_tag(takes_context=True)
+#def make_delete_url(context,urlname,**kwargs ):
+#    p = context.get('mediafile_deleter_hint',{} )
+#    p.update(kwargs)
+#    return reverse(urlname, kwargs=p)
 #
 @register.simple_tag(takes_context=True)
 def mediafile_delete_url(context,mediafile,**kwargs ):
     urlname = context.get('mediafile_delete_url','gallery_admin_media_delete')
+    p = kwargs
     p = context.get('mediafile_url_hint',{} )
     p.update(kwargs)
     return reverse(urlname, kwargs=p)
@@ -30,6 +33,7 @@ def mediafile_delete_url(context,mediafile,**kwargs ):
 @register.simple_tag(takes_context=True)
 def mediafile_image_url(context,mediafile,**kwargs ):
     urlname = context.get('mediafile_image_url','mediafiles_preview')
+
     p = context.get('mediafile_url_hint',{} )
     p.update(kwargs)
     return reverse(urlname, kwargs=p)
