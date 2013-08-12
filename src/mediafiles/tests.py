@@ -118,7 +118,7 @@ class MediaFileTest(RootTest):
         ret = cached_thumb( mediafile.data )
 
         response = self.get("gallery_admin_media_thumb",
-             id=g.id ,mid=mediafile.id,width=100, height=30)
+             id=g.id ,mid=mediafile.id,query={'width':100, 'height':30,})
         self.assertEqual(response['Content-Type'],"image/jpeg" )
 
         import hashlib
