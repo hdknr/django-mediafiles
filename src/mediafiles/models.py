@@ -6,6 +6,7 @@ from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
+from django.core.files import File
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
@@ -18,8 +19,13 @@ import time
 import urllib
 
 from thumbs import generate_thumb,cached_thumb,get_cached_file,DEFAULT_SIZE
+try:
+    from pgmagick.api import Image 
+except:
+    Image = None
 
 timestamp = lambda : int(time.mktime(datetime.now().timetuple()))
+UPLOAD_TMP_DIR = settings.FILE_UPLOAD_TEMP_DIR or '/tmp'
 
 def create_upload_path(self, filename):
     if self.created == None:
@@ -107,9 +113,35 @@ class MediaFile(models.Model):
     def is_image(self):
         return self.mimetype.find("image") ==0
 
+    def pdf_to_images(self):
+        ''' PDF to images '''
+        assert os.path.isfile(self.data.path) 
+        i=0
+        medias=[]
+        while Image and  True:
+            try:
+                image = Image("%s[%d]" % (self.data.path,i) )
+                image_file = os.path.join(UPLOAD_TMP_DIR, 'pdf.%d.%d.png' % (self.id,i) ) 
+                image.write( image_file )
+                media = MediaFile.create(image_file,name=image_file.split('/')[-1:][0]) 
+                medias.append(media)
+            except Exception ,e:
+                #:TODO Exception type check
+                break
+            i=i+1            
+
+        return medias
+
     def __unicode__(self):
         return self.title or self.name or  self.slug or self.id
 
+    @classmethod
+    def create(cls,path,name=name): 
+        media=cls()
+        media.data.save(name or path, File(open(path)))
+        media.save()    
+        return media
+        
     class Meta:
         verbose_name = _(u"Media File")
         verbose_name_plural = _(u"Media Files")
