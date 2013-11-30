@@ -113,7 +113,7 @@ class MediaFile(models.Model):
     def is_image(self):
         return self.mimetype.find("image") ==0
 
-    def pdf_to_images(self):
+    def pdf_to_images(self,ext="jpg"):
         ''' PDF to images '''
         assert os.path.isfile(self.data.path) 
         i=0
@@ -121,7 +121,7 @@ class MediaFile(models.Model):
         while Image and  True:
             try:
                 image = Image("%s[%d]" % (self.data.path,i) )
-                image_file = os.path.join(UPLOAD_TMP_DIR, 'pdf.%d.%d.png' % (self.id,i) ) 
+                image_file = os.path.join(UPLOAD_TMP_DIR, 'pdf.%d.%d.%s' % (self.id,i,ext) ) 
                 image.write( image_file )
                 media = MediaFile.create(image_file,name=image_file.split('/')[-1:][0]) 
                 medias.append(media)

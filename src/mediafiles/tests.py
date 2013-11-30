@@ -139,15 +139,16 @@ class MediaFileTest(RootTest):
 
         import glob 
         from models import UPLOAD_TMP_DIR
-        pngs = glob.glob( os.path.join(UPLOAD_TMP_DIR, "pdf.*.png" ))
-        print pngs
-        png_medias = MediaFile.objects.filter(mimetype="image/png") 
+        ext = "jpg" 
+        jpgs = glob.glob( os.path.join(UPLOAD_TMP_DIR, "pdf.*.jpg" ))
+        print jpgs
+        jpg_medias = MediaFile.objects.filter(mimetype="image/jpeg" ) 
 
         #:ファイル名ルールチェック
         import re
-        self.assertEqual(png_medias.count(), len(pngs) )
-        for p in png_medias:
-            self.assertIsNotNone( re.search(r"pdf.%d.\d+.png" % mediafile.id, p.name ) )
+        self.assertEqual(jpg_medias.count(), len(jpgs) )
+        for p in jpg_medias:
+            self.assertIsNotNone( re.search(r"pdf.%d.\d+.jpg" % mediafile.id, p.name ) )
     
         #:削除
         mediafile.delete()
