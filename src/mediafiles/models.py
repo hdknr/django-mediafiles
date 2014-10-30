@@ -164,10 +164,11 @@ class MediaFile(models.Model):
 
 class MediaOwnerMixIn(object):
     ''' TODO: implements later 10/29 '''
-    def media_files(self):
+    def media_files(self, **kwargs):
         return MediaFile.objects.filter(
             content_type__model=self._meta.model_name,
             object_id=self.id,
+            **kwargs
         )
 
 
