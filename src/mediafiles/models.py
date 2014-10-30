@@ -162,6 +162,15 @@ class MediaFile(models.Model):
         verbose_name_plural = _(u"Media Files")
 
 
+class MediaOwnerMixIn(object):
+    ''' TODO: implements later 10/29 '''
+    def media_files(self):
+        return MediaFile.objects.filter(
+            content_type__model=self._meta.model_name,
+            object_id=self.id,
+        )
+
+
 class Gallery(models.Model):
     user = models.ForeignKey(
         User, null=True, blank=True, default=None,
